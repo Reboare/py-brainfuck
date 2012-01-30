@@ -5,22 +5,33 @@ Created on Jan 29, 2012
 '''
 import unittest
 from brainfuck.brainfuck import Brainfuck
-import sys, multiprocessing, cStringIO
-import doctest
+import sys
+from StringIO import StringIO
+
 
 
 class Test(unittest.TestCase):
-
-
+    def setUp(self):
+        self.held, sys.stdout = sys.stdout, StringIO()
+    
     def testWorld(self):
-        br = Brainfuck("++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.")
-        bar = cStringIO.StringIO()
-        sys.stdout = bar
+        
+        br = Brainfuck("++++++++++[>+++++++>+++a+++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.")
         br.parse()
-        self.assertEqual(bar.getvalue(), "Hello World!\n")
+        self.assertEqual(sys.stdout.getvalue(), "Hello World!\n")
+        
+        
+    """
+    def testFib(self):
+        with open("fib") as filer:
+            file_source = filer.read()
+        bran = Brainfuck(file_source)
+        bran.parse()
+        self.assertEqual(sys.stdout.getvalue(), "1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89")"""
+        
     
-    
- 
+    def tearDown(self):
+        sys.stdout = self.held
 
 
 if __name__ == "__main__":

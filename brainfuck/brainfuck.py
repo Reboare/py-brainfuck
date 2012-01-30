@@ -15,11 +15,8 @@ class Brainfuck(object):
         """Text must be the unicode data to be passed to the class 
         which is then parsed
         """
-        self.code = self.__clean(text)
-            
-    def __clean(self, text):
-        """Removes comments from the code before parsing"""
-        return filter(lambda x: x in ["+", "-", ".", ",", "[", "]", ">", "<"], text)
+        commands = ["+", "-", ".", ",", "[", "]", ">", "<"]
+        self.code = [x for x in text if x in commands ]   
         
     def __instruction(self, node):
         """Maps every instruction but the loop to 
@@ -52,7 +49,7 @@ class Brainfuck(object):
         elif node == ".":
             arg = chr(self.__tree[self.__pointer])
             sys.stdout.write(arg)
-            sys.stdout.flush()
+            #sys.stdout.flush()
             
     def __generate_brace_map(self):
         """Parses over the instruction set and returns a list containing 

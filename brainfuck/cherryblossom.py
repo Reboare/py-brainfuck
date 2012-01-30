@@ -1,5 +1,40 @@
 from brainfuck import Brainfuck
 
+try:
+    from nltk.corpus import cmudict
+    
+    
+except ImportError, e:
+    print "Haiku parsing disabling!  To enable please install nltk"
+    
+
+def compliant_haiku(haiku_source):
+        """Ensure that newlines remain and all 
+        other punctuation has been stripped"""
+        dict = cmudict.dict()
+        haiku_lines = haiku_source.splitlines()
+        syllables = []
+        for line in haiku_lines:
+            if line == "":
+                continue
+            sal=[]
+            for word in line.split(" "):
+                sal.append(len([x for x in dict[word][0] if x[-1].isdigit()]))
+            syllables.append(sum(sal))
+        pattern = [5,7,5]
+        if len(syllables) % 3 == 0:
+            while len(syllables) > 0:
+                if syllables[:3] == pattern:
+                    for x in range(2,-1,-1):
+                        syllables.pop(x)
+                else:
+                    return False
+        else:
+            return False
+        return True
+    
+compliant_haiku("beautiful jasmine\nyour lovely fragrance heals me\n\nevery morning\nremembering you\ndreaming of your lovely smile\nwhen will you come here")
+
 class CherryBlossom(Brainfuck):
     """CherryBlossom Interpreter.  A language fundamentally identical to
     Brainfuck but with a haiku structure.  http://vivin.net/projects/cherryblossom/
@@ -12,8 +47,31 @@ class CherryBlossom(Brainfuck):
     
     def __compliant_haiku(self, haiku_source):
         """Ensure that newlines remain and all 
-        other punctuation has been stripped""" 
-        pass
+        other punctuation has been stripped"""
+        """Ensure that newlines remain and all 
+        other punctuation has been stripped"""
+        dict = cmudict.dict()
+        haiku_lines = haiku_source.splitlines()
+        syllables = []
+        for line in haiku_lines:
+            if line == "":
+                continue
+            sal=[]
+            for word in line.split(" "):
+                sal.append(len([x for x in dict[word][0] if x[-1].isdigit()]))
+            syllables.append(sum(sal))
+        pattern = [5,7,5]
+        if len(syllables) % 3 == 0:
+            while len(syllables) > 0:
+                if syllables[:3] == pattern:
+                    for x in range(2,-1,-1):
+                        syllables.pop(x)
+                else:
+                    return False
+        else:
+            return False
+        return True
+        
         
     def __convert(self, source_data, strict = False):
         """Takes a Haiku source file and translates it into
