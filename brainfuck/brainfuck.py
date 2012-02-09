@@ -11,6 +11,7 @@ class Brainfuck(object):
     __current_val = 0 
     __output = ""
     
+    
     def __init__(self, text):
         """Text must be the unicode data to be passed to the class 
         which is then parsed
@@ -21,17 +22,7 @@ class Brainfuck(object):
     def __instruction(self, node):
         """Maps every instruction but the loop to 
         a python instruction.  Soon to be merged
-        with parse"""
-
-        def refresh():
-            """
-            refresh the parse tree
-            """
-            try:
-                self.__current_val = self.__tree[self.__pointer]
-            except KeyError:
-                self.__current_val = 0
-                
+        with parse"""      
         if node == "+":
             self.__current_val += 1
             self.__tree[self.__pointer] = self.__current_val
@@ -40,16 +31,17 @@ class Brainfuck(object):
             self.__tree[self.__pointer] = self.__current_val
         elif node == ">":
             self.__pointer += 1
-            refresh()     
+            self.__current_val = self.__tree.get(self.__pointer, 0)
+            
         elif node == "<":
             self.__pointer -= 1
-            refresh()     
+            self.__current_val = self.__tree.get(self.__pointer, 0) 
         elif node == ",":
             self.__tree[self.__pointer] = ord(sys.stdin.read(1))  
         elif node == ".":
             arg = chr(self.__tree[self.__pointer])
             sys.stdout.write(arg)
-            #sys.stdout.flush()
+            sys.stdout.flush()
             
     def __generate_brace_map(self):
         """Parses over the instruction set and returns a list containing 
@@ -63,8 +55,7 @@ class Brainfuck(object):
             if each == "[": 
                 left_braces.append(pos)
             if each == "]": 
-                brace_map.append([left_braces[-1], pos])
-                left_braces.pop()     
+                brace_map.append([left_braces[-1], pos])   
         return brace_map
     
     def parse(self):
@@ -76,11 +67,11 @@ class Brainfuck(object):
             if instructions[point] != "]" and instructions[point] != "[":
                 self.__instruction(instructions[point])
             elif instructions[point] == "[" and self.__current_val == 0:
-                for each in brace_map:
-                    if each[0] == point: 
-                        point = each[1]
+                for left, right in brace_map:
+                    if left == point: 
+                        point = right
             elif instructions[point] == "]" and self.__current_val != 0:
-                for each in brace_map:
-                    if each[1] == point: 
-                        point = each[0]
+                for left, right in brace_map:
+                    if right == point: 
+                        point = left
             point += 1
